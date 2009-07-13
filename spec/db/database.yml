@@ -1,0 +1,8 @@
+test:
+  adapter: mysql
+  encoding: utf8
+  database: your_db_name
+  username: your_db_user
+  password: your_password
+  host: your_host
+  socket: your_socket

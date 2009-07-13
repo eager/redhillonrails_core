@@ -139,6 +139,18 @@ Note also that this ties in well with Rails built-in support for case-insensitiv
 
   validates_uniqueness_of :name, :case_sensitive => false
 
+=== Testing
+
+The plugin is heavily dependent on the database and rspec testing is provided to verify if database supports plugin features.
+
+To test the plugin configure the <code>vendor/plugins/redhillonrails_core/spec/db/database.yml</code> to use selected adapter (create the database before running the tests)
+Rspec and rspec-rails plugins are neccessary as well.
+
+The plugin was tested on:
+* mysql5 - all tests pass
+* sqlite - (no support for foreign key constrains checking) 
+* postgresql - all tests pass
+
 === See Also
 
 * Foreign Key Associations (foreign_key_associations)
