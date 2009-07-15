@@ -10,6 +10,10 @@ describe "model" do
     Parent.should respond_to(:indexes)
   end
   
+end
+
+describe "migration" do
+  
   #next 5 tests are inter dependant so be careful when modyfying
   it "should create table with foreign key" do
     create_child_table :name => :parent_id_foreign_key
@@ -98,7 +102,12 @@ describe "model" do
   def create_child_table(options = nil)
     lambda {
       ActiveRecord::Migration.create_table :children, :force => true do |t|
-        t.integer :parent_id
+        # fix for tests when run with foreign_key_migration installed
+        if defined?(RedHillConsulting::ForeignKeyMigrations)
+          t.column_without_foreign_key_migrations :parent_id, :integer
+        else
+          t.integer :parent_id
+        end
         t.foreign_key(:parent_id, :parents, :id, options)
       end
     }.should_not raise_error
