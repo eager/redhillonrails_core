@@ -143,14 +143,27 @@ Note also that this ties in well with Rails built-in support for case-insensitiv
 
 The plugin is heavily dependent on the database and rspec testing is provided to verify if database supports plugin features.
 
-To test the plugin configure the <code>vendor/plugins/redhillonrails_core/spec/db/database.yml</code> to use selected adapter (create the database before running the tests)
-Rspec and rspec-rails plugins are neccessary as well.
+Rspec and rspec-rails plugins are neccessary:
+  
+  script/plugin install git://github.com/dchelimsky/rspec.git
+  script/plugin install git://github.com/dchelimsky/rspec-rails.git
+  script/generate rspec
+  
+The plugin test use rails test database so it must be created before the tests are run:
+
+  rake db:create RAILS_ENV=test
+  
+And then run the plugin specs with:
+  
+  rake specs:plugins
 
 The plugin was tested on:
 * mysql5 - all tests pass
-* sqlite - (no support for foreign key constrains checking) 
+* sqlite - plugin doesn't support foreign key functionality for sqlite because db doesn't implement foreign key constraints
+* sqlite3 - plugin doesn't support foreign key functionality for sqlite3
 * postgresql - all tests pass
 
+Currently only foreign key functionality is tested
 === See Also
 
 * Foreign Key Associations (foreign_key_associations)

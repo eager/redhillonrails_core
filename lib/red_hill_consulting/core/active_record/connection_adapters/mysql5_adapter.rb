@@ -1,25 +1,20 @@
 module RedHillConsulting::Core::ActiveRecord::ConnectionAdapters
   # MySQL5-specific behaviors
   module Mysql5Adapter
+    
     def reverse_foreign_keys(table_name, name = nil)
-      @@schema ||= nil
-      @@schema_version ||= 0
-      current_version = ActiveRecord::Migrator.current_version
-      if @@schema.nil? || @@schema_version != current_version
-        @@schema_version = current_version
-        ans = execute(<<-SQL, name)
-        SELECT constraint_name, table_name, column_name, referenced_table_name, referenced_column_name
-          FROM information_schema.key_column_usage
-         WHERE table_schema = SCHEMA()
-           AND referenced_table_schema = table_schema
-         ORDER BY constraint_name, ordinal_position;
-        SQL
-        @@schema = []
-        ans.each do | row |
-          @@schema << [row[0], row[1], row[2], row[3], row[4]]
-        end
+      ans = execute(<<-SQL, name)
+      SELECT constraint_name, table_name, column_name, referenced_table_name, referenced_column_name
+        FROM information_schema.key_column_usage
+       WHERE table_schema = SCHEMA()
+         AND referenced_table_schema = table_schema
+       ORDER BY constraint_name, ordinal_position;
+      SQL
+      
+      results = []
+      ans.each do | row |
+        results << [row[0], row[1], row[2], row[3], row[4]]
       end
-      results = @@schema
       current_foreign_key = nil
       foreign_keys = []
 
