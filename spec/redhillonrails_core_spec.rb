@@ -9,7 +9,8 @@ describe "model" do
   it "should respond to indexes" do
     Parent.should respond_to(:indexes)
   end
-    
+  
+  #next 5 tests are inter dependant so be careful when modyfying
   it "should create table with foreign key" do
     create_child_table :name => :parent_id_foreign_key
     foreign_key_verification
@@ -31,6 +32,7 @@ describe "model" do
   it "should remove table without errors" do
     drop_child_table
   end
+  #end of interdependant test
   
   describe "with foreign_key and options" do
     
