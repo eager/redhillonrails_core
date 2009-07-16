@@ -8,6 +8,7 @@ module RedHillConsulting::Core::ActiveRecord
       def self.extended(base)
         class << base
           alias_method_chain :columns, :redhillonrails_core
+          alias_method_chain :reset_column_information, :redhillonrails_core
           alias_method_chain :abstract_class?, :redhillonrails_core
         end
       end
@@ -21,7 +22,7 @@ module RedHillConsulting::Core::ActiveRecord
       end
 
       def columns_with_redhillonrails_core
-        unless @columns
+        unless defined?(@columns) && @columns
           columns_without_redhillonrails_core
           cols = columns_hash
           indexes.each do |index|
@@ -49,6 +50,12 @@ module RedHillConsulting::Core::ActiveRecord
       def reverse_foreign_keys
         connection.reverse_foreign_keys(table_name, "#{name} Reverse Foreign Keys")
       end
+      
+      def reset_column_information_with_redhillonrails_core
+        reset_column_information_without_redhillonrails_core
+        @indexes = nil
+      end
+        
     end
   end
 end

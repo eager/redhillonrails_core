@@ -23,6 +23,7 @@ Spec::Runner.configure do |config|
   config.before :each do
     full_example_description = "Starting #{self.class.description} #{@method_name}"  
     ActiveRecord::Base.logger.info("\n\n#{full_example_description}\n#{'-' * (full_example_description.length)}")
+    Child.reset_column_information
   end
 
   config.before :all do
