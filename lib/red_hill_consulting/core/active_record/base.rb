@@ -43,7 +43,7 @@ module RedHillConsulting::Core::ActiveRecord
       end
 
       def foreign_keys
-        @foreign_keys ||= connection.foreign_keys(table_name, "#{name} Foreign Keys")
+        connection.foreign_keys(table_name, "#{name} Foreign Keys")
       end
 
       def reverse_foreign_keys

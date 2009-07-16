@@ -5,25 +5,11 @@ rescue LoadError
   exit
 end
 
-require File.dirname(__FILE__) + '/models/parent'
+require File.dirname(__FILE__) + '/models/top'
 require File.dirname(__FILE__) + '/models/child'
 
-#remove tables after tests if they still exist
-def clear_db_after_test
-  if ActiveRecord::Base.connection.table_exists? :children
-    ActiveRecord::Migration.drop_table :children
-  end
-  
-  if ActiveRecord::Base.connection.table_exists? :parents
-    ActiveRecord::Migration.drop_table :parents
-  end
-end
-
-#add parent table common for all foreign key tests
-def prepare_db_for_test
-  clear_db_after_test
-  ActiveRecord::Migration.create_table :parents, {:force => true}
-end
+require File.dirname(__FILE__) + '/spec_helper_module'
+include SpecHelperModule
 
 #silence migration output
 ActiveRecord::Migration.verbose = false

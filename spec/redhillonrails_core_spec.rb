@@ -2,35 +2,36 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe "model" do
   
-  it "should respond to foreign_keys" do
-    Parent.should respond_to(:foreign_keys)
+  it "should respond to method foreign_keys" do
+    Top.should respond_to(:foreign_keys)
   end
   
-  it "should respond to indexes" do
-    Parent.should respond_to(:indexes)
+  it "should respond to method indexes" do
+    Top.should respond_to(:indexes)
   end
   
 end
 
 describe "migration" do
+  include SpecHelperModule::Core
   
   #next 5 tests are inter dependant so be careful when modyfying
   it "should create table with foreign key" do
-    create_child_table :name => :parent_id_foreign_key
-    foreign_key_verification
+    create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :name => :top_id_foreign_key }
+    foreign_key_expectations
   end
   
   it "should drop foreign key with remove_foreign_key" do
     lambda {
-      ActiveRecord::Migration.remove_foreign_key :children, :parent_id_foreign_key
+      ActiveRecord::Migration.remove_foreign_key :children, :top_id_foreign_key
     }.should_not raise_error
   end
   
   it "should add foreign key with add_foreign_key" do
     lambda {
-      ActiveRecord::Migration.add_foreign_key :children, :parent_id, :parents, :id, :name => :parent_id_foreign_key
+      ActiveRecord::Migration.add_foreign_key :children, :top_id, :tops, :id, :name => :top_id_foreign_key
     }.should_not raise_error
-    foreign_key_verification
+    foreign_key_expectations
   end
   
   it "should remove table without errors" do
@@ -38,99 +39,68 @@ describe "migration" do
   end
   #end of interdependant test
   
-  describe "with foreign_key and options" do
+  describe "when using t.foreign_key" do
     
-    it ":on_delete => :cascade" do
-      create_child_table :on_delete => :cascade
+    it "should create foreign key with referential action ON DELETE CASCADE when using :on_delete => :cascade option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_delete => :cascade }
       
-      parent = Parent.create
+      top = Top.create
       
-      child = Child.create :parent_id => parent.id
+      child = Child.create :top_id => top.id
       
-      Parent.delete(parent.id)
+      Top.delete(top.id)
       lambda {Child.find(child.id)}.should raise_error(ActiveRecord::RecordNotFound)
       
       drop_child_table
     end
     
-    it ":on_delete => :restrict" do
-      create_child_table :on_delete => :restrict
+    it "should create foreign key with referential action ON DELETE RESTRICT when using :on_delete => :restrict option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_delete => :restrict }
       
-      parent = Parent.create
+      top = Top.create
       
-      child = Child.create :parent_id => parent.id
+      child = Child.create :top_id => top.id
       
-      lambda {parent.delete}.should raise_error(ActiveRecord::StatementInvalid)
+      lambda {top.delete}.should raise_error(ActiveRecord::StatementInvalid)
       
       drop_child_table
     end
     
-    it ":on_delete => :set_null" do
-      create_child_table :on_delete => :set_null
+    it "should create foreign key with referential action ON DELETE SET NULL when using :on_delete => :set_null option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_delete => :set_null }
 
-      parent = Parent.create
+      top = Top.create
       
-      child = Child.create :parent_id => parent.id
+      child = Child.create :top_id => top.id
       
-      parent.delete
+      top.delete
       child.reload
-      child.parent_id.should == nil
+      child.top_id.should == nil
       
       drop_child_table
     end
     
-    it ":on_update => :cascade" do
-      create_child_table :on_update => :cascade
-      # cannot change AR object id with rails
+    it "should create foreign key with referential action ON UPDATE CASCADE when using :on_update => :cascade option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_update => :cascade }
+      # cannot change AR object id with rails so functionality cannot be used inside rails
+      # could be only tested by parsing raw sql but its database dependant and not worth time
       drop_child_table
     end
     
-    it ":on_update => :restrict" do
-      create_child_table :on_update => :restrict
-      # cannot change AR object id with rails
+    it "should create foreign key with referential action ON UPDATE RESTRICT when using :on_update => :restrict option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_update => :restrict }
+      # cannot change AR object id with rails so functionality cannot be used inside rails
+      # could be only tested by parsing raw sql but its database dependant and not worth time
       drop_child_table
     end
     
-    it ":on_update => :set_null" do
-      create_child_table :on_update => :set_null
-      # cannot change AR object id with rails
+    it "should create foreign key with referential action ON UPDATE SET NULL when using :on_update => :set_null option" do
+      create_child_table_with_top_id_and { |t| t.foreign_key :top_id, :tops, :id, :on_update => :set_null }
+      # cannot change AR object id with rails so functionality cannot be used inside rails
+      # could be only tested by parsing raw sql but its database dependant and not worth time
       drop_child_table
     end
     
   end
   
-  def create_child_table(options = nil)
-    lambda {
-      ActiveRecord::Migration.create_table :children, :force => true do |t|
-        # fix for tests when run with foreign_key_migration installed
-        if defined?(RedHillConsulting::ForeignKeyMigrations)
-          t.column_without_foreign_key_migrations :parent_id, :integer
-        else
-          t.integer :parent_id
-        end
-        t.foreign_key(:parent_id, :parents, :id, options)
-      end
-    }.should_not raise_error
-  end
-  
-  def drop_child_table
-    lambda {
-      ActiveRecord::Migration.drop_table :children
-    }.should_not raise_error
-  end
-  
-  def foreign_key_verification
-    expected_key = Child.foreign_keys.first
-    expected_key[:name] .should == "parent_id_foreign_key"
-    expected_key[:column_names].should == ["parent_id"]
-    expected_key[:references_column_names].should == ["id"]
-    expected_key[:table_name].should == "children"
-    expected_key[:references_table_name].should == "parents"
-    
-    #check if database sopports foreign keys
-    child = Child.new
-    lambda {child.save!}.should_not raise_error(ActiveRecord::StatementInvalid)
-    child = Child.new :parent_id => 5
-    lambda {child.save!}.should raise_error(ActiveRecord::StatementInvalid)
-  end
 end
