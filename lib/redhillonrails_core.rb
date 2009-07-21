@@ -19,14 +19,12 @@ ActiveRecord::ConnectionAdapters::Column.send(:include, RedHillConsulting::Core:
 ActiveRecord::ConnectionAdapters::AbstractAdapter.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::AbstractAdapter)
 ActiveRecord::ConnectionAdapters::SchemaStatements.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::SchemaStatements)
 
-if defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) && 
-  (ActiveRecord::Base.connection.active?) &&
-  (ActiveRecord::Base.connection.adapter_name.downcase == 'postgresql') then
+if defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
+ (ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)) then
   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::PostgresqlAdapter)
 end
 if defined?(ActiveRecord::ConnectionAdapters::MysqlAdapter) &&
-  (ActiveRecord::Base.connection.active?) &&
-  (ActiveRecord::Base.connection.adapter_name.downcase == 'mysql') then
+  (ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter)) then
   ActiveRecord::ConnectionAdapters::MysqlColumn.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::MysqlColumn)
   ActiveRecord::ConnectionAdapters::MysqlAdapter.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::MysqlAdapter)
   if ActiveRecord::Base.connection.send(:version)[0] < 5
@@ -39,7 +37,6 @@ if defined?(ActiveRecord::ConnectionAdapters::MysqlAdapter) &&
     
 end
 if defined?(ActiveRecord::ConnectionAdapters::SQLite3Adapter) &&
-  (ActiveRecord::Base.connection.active?) &&
-  (ActiveRecord::Base.connection.adapter_name.downcase == 'sqlite') then
+ (ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLite3Adapter)) then
   ActiveRecord::ConnectionAdapters::SQLite3Adapter.send(:include, RedHillConsulting::Core::ActiveRecord::ConnectionAdapters::Sqlite3Adapter)
 end
