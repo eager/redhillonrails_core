@@ -1,3 +1,9 @@
+module RedHillConsulting
+end
+
+module RedHillConsulting::Core
+end
+
 module RedHillConsulting::Core::ActiveRecord
   module Base
     def self.included(base)

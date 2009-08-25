@@ -1,5 +1,9 @@
 add
 
+[REVISION 20090824]
+
+[NEW] redhillonrails_core is now a gem
+
 [REVISION 20080701]
 
 [FIXED] Looking up schema version fails on Rails 2.1.
