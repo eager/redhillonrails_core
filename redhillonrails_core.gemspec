@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{redhillonrails_core}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["RedHill Consulting, Pty. Ltd.", "Christian Eager"]
@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
      "lib/red_hill_consulting/core/active_record/schema.rb",
      "lib/red_hill_consulting/core/active_record/schema_dumper.rb",
      "lib/redhillonrails_core.rb",
+     "redhillonrails_core.gemspec",
      "spec/models/child.rb",
      "spec/models/top.rb",
      "spec/redhillonrails_core_spec.rb",
