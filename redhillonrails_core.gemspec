@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{redhillonrails_core}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["RedHill Consulting, Pty. Ltd.", "Christian Eager"]
-  s.date = %q{2009-08-25}
+  s.date = %q{2009-08-26}
   s.description = %q{RedHill on Rails Core is a plugin that features to support other RedHill on Rails plugins. Those features include:
         * Creating and dropping views;
         * Creating and removing foreign-keys;
